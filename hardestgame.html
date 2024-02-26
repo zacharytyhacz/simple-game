@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Hardest Game Ever</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <canvas id="myCanvas" width="512" height="512" style="border-style: solid"></canvas>
+        <p id="myX"></p>
+        <p id="myY"></p>
+        <p id="ifhit"></p>
+        <script>
+            var canvas = document.getElementById("myCanvas");
+            var ctx = canvas.getContext("2d");
+            
+            // player 
+            var playerX = canvas.width / 2;
+            var playerY = canvas.height / 2;
+            var Speed = 2;
+            var playersize = 10;
+            
+            // tail
+            var tails = 0;
+            var tailoffsetX;
+            var tailoffsetY;
+            
+            // input 
+            var rightPressed = false;
+            var leftPressed = false;
+            var upPressed = false;
+            var downPressed = false;
+            var bStopMovingRight = false;
+            var bStopMovingDown = false;
+            
+            // goals
+            var bTouched = false;
+            var goalX = 450;
+            var goalY = canvas.height / 2;
+            var goalsize = 5;
+            
+            document.addEventListener("keydown", keyDownHandler, false);
+            //document.addEventListener("keyup", keyUpHandler, false);
+            
+            function draw(){               
+                ctx.clearRect(0,0, canvas.width, canvas.height);
+                drawplayer();
+                drawRandomGoals();
+                console.log(playerX);
+                console.log(playerY);
+            }
+            
+            function keyDownHandler(e) {
+                e = e || window.event;
+                if (e.keyCode == 38 || e.keyCode == 87) {
+                    upPressed = true;
+                    downPressed = false;
+                    leftPressed = false;
+                    rightPressed = false;
+                    tailoffsetY = +15; 
+                    tailoffsetX = 0;
+                }
+                
+                else if (e.keyCode == 40 || e.keyCode == 83) {
+                    upPressed = false;
+                    downPressed = true;
+                    leftPressed = false;
+                    rightPressed = false;
+                    tailoffsetY = -15;
+                    tailoffsetX = 0;
+                }
+                
+                else if (e.keyCode == 37 || e.keyCode == 65) {
+                    upPressed = false;
+                    downPressed = false;
+                    leftPressed = true;
+                    rightPressed = false;
+                    tailoffsetX = +15;
+                    tailoffsetY = 0;
+                }
+                
+                else if (e.keyCode == 39 || e.keyCode == 68) {
+                    upPressed = false;
+                    downPressed = false;
+                    leftPressed = false;
+                    rightPressed = true;
+                    tailoffsetX = -15;
+                    tailoffsetY = 0;
+                }
+            }
+         
+            function drawplayer(){
+                if (playerX < 0){
+                    playerX = 0;
+                }
+                else if (playerX > 500){
+                    bStopMovingRight = true;
+                }
+                if (playerY < 5){
+                    playerY = 5;
+                }
+                else if (playerY > 500){
+                    bStopMovingDown = true;
+                }
+                if(upPressed){
+                    bStopMovingDown = false;
+                    playerY -= Speed;
+                }
+                if(downPressed){
+                    if(!bStopMovingDown){
+                        playerY += Speed;
+                    }
+                }
+                if(leftPressed){
+                    bStopMovingRight = false;
+                    playerX -= Speed;
+                }
+                if(rightPressed){
+                    if(!bStopMovingRight){
+                        playerX += Speed;
+                    }      
+                }
+                ctx.beginPath();
+                ctx.rect(playerX,playerY, playersize, playersize);
+                ctx.fillStyle = "#000000";
+                ctx.fill();
+                ctx.closePath();
+                for(i=1;i<=tails;i++){
+                   ctx.beginPath();
+                   ctx.rect(playerX+tailoffsetX*i,playerY+tailoffsetY*i, playersize, playersize);
+                   ctx.fillStyle = "#ff3300";
+                   ctx.fill();
+                   ctx.closePath();   
+                }
+                
+                // detect hit 
+                if((Math.abs((playerX+(playersize/2)) - (goalX+(goalsize/2))) <= 7.5) && (Math.abs((playerY+(playersize/2)) - (goalY+(goalsize/2))) <= 7.5) ){
+                    addTail();
+                    bTouched = true;
+                    document.getElementById("ifhit").innerHTML = "HIT";
+                }
+                else {
+                    document.getElementById("ifhit").innerHTML = "NO HIT";
+                }
+                document.getElementById("myX").innerHTML = Math.abs((playerX+(playersize/2)) - (goalX+(goalsize/2)));
+                document.getElementById("myY").innerHTML = Math.abs((playerY+(playersize/2)) - (goalY+(goalsize/2)));
+            }
+            function drawRandomGoals(){
+                if(!bTouched){
+                    ctx.beginPath();
+                    ctx.rect(goalX,goalY, goalsize, goalsize);
+                    ctx.fillStyle = "#000000";
+                    ctx.fill();
+                    ctx.closePath(); 
+                }
+                else{
+                    goalX = Math.floor((Math.random() * 500) + 1);
+                    goalY = Math.floor((Math.random() * 500) + 1);
+                    bTouched = false;
+                }
+            }
+            function addTail(){
+                tails++;
+            }
+            setInterval(draw, 10);
+        </script>
+            
+    </body>
+</html>

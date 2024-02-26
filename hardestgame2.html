@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Hardest Game Ever2</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <canvas id="myCanvas" width="512" height="512" style="border-style: solid"></canvas>
+        <p id="myX"></p>
+        <p id="myY"></p>
+        <p id="ifhit"></p>
+        <script>
+            var canvas = document.getElementById("myCanvas");
+            var ctx = canvas.getContext("2d");
+            
+            // player 
+            var playerX = canvas.width / 2;
+            var playerY = canvas.height / 2;
+            var Speed = 1;
+            var playersize = 10;  
+            // input 
+            var rightPressed = false;
+            var leftPressed = false;
+            var upPressed = false;
+            var downPressed = false;
+            var bStopMovingRight = false;
+            var bStopMovingDown = false;
+            
+            document.addEventListener("keydown", keyDownHandler, false);
+            document.addEventListener("keyup", keyUpHandler, false);
+            
+            function draw(){   
+                ctx.clearRect(0,0, canvas.width, canvas.height);
+                drawplayer();
+            }
+            
+            function keyDownHandler(e) {
+                e = e || window.event;
+                if (e.keyCode == 38 || e.keyCode == 87) {
+                    upPressed = true;
+                }
+                
+                else if (e.keyCode == 40 || e.keyCode == 83) {
+                    downPressed = true;
+                }
+                
+                else if (e.keyCode == 37 || e.keyCode == 65) {
+                    leftPressed = true;
+                }
+                
+                else if (e.keyCode == 39 || e.keyCode == 68) {
+                    rightPressed = true;
+                }
+            }
+         
+            function keyUpHandler(e){
+                e = e || window.event;
+                if (e.keyCode == 38 || e.keyCode == 87) {
+                    upPressed = false;
+                }
+                
+                else if (e.keyCode == 40 || e.keyCode == 83) {
+                    downPressed = false;
+                }
+                
+                else if (e.keyCode == 37 || e.keyCode == 65) {
+                    leftPressed = false;
+                }
+                
+                else if (e.keyCode == 39 || e.keyCode == 68) {
+                    rightPressed = false;
+                }
+            }
+            
+            function drawplayer(){
+                if(upPressed){
+                    playerY -= Speed;
+                }
+                if(downPressed){
+                    playerY += Speed;
+                }
+                if(leftPressed){
+                    playerX -= Speed;
+                }
+                if(rightPressed){
+                    playerX += Speed;
+                }
+                /* canvas edge detection */
+                if (playerX <= 0){
+                    playerX = 0;
+                }
+                else if (playerX >= (canvas.width - playersize)){
+                    playerX = canvas.width - playersize;
+                }
+                if (playerY <= 0){
+                    playerY = 0;
+                }
+                else if(playerY >= (canvas.height - playersize)){
+                    playerY = canvas.height - playersize;
+                }
+                
+                ctx.beginPath();
+                ctx.rect(playerX,playerY, playersize, playersize);
+                ctx.fillStyle = "#000000";
+                ctx.fill();
+                ctx.closePath();
+            }
+            setInterval(draw, 5);
+        </script>
+            
+    </body>
+</html>
